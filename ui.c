@@ -1,11 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#include "commands.h"
 
-void display_prompt()
+void ui_display_prompt()
 {
-    char curr_working_dir[1024]; // Limit to dir name
-    getcwd(curr_working_dir, sizeof(curr_working_dir));
+    char* buf;
+    buf = cmd_get_login();
+    printf("%s:", buf);
+    buf = cmd_getcwd();
+    printf("%s ??", buf);
+    free(buf);
+}
 
-    printf("%s ??", curr_working_dir);
+void ui_display_text(char* text)
+{
+    printf("%s\n", text);
 }

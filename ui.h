@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 
-void start_ui();
-void display_prompt();
+void ui_start_ui();
+void ui_display_prompt();
+void ui_display_text(char* text);
 
