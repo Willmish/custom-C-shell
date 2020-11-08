@@ -1,4 +1,4 @@
-#include <stdbool.h>
+#pragma once
 // Commands available:
 //
 // user related

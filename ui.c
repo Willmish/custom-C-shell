@@ -12,7 +12,15 @@ void ui_display_prompt()
     free(buf);
 }
 
+char* ui_get_input()
+{
+    char* lineptr = malloc(1);
+    int len = (int) getline(&lineptr, 0, stdin);
+    return lineptr;
+}
+
 void ui_display_text(char* text)
 {
     printf("%s\n", text);
 }
+

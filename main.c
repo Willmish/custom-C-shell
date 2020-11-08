@@ -1,5 +1,4 @@
-#include "ui.h"
-#include "commands.h"
+#include "shell.h"
 // Features to add:
 // Bin folder (rm command moves to the bin folder, empty every n days or when max limit reached)
 // change directory
@@ -20,9 +19,8 @@
 
 int main()
 {
-    ui_display_prompt();
-    // read user input
-    // separate command flags
-    // execute commands
+    shell_loop();
     return 0;
 }
+
+
