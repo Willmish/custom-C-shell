@@ -2,6 +2,8 @@
 #include "commands.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 
 void shell_loop()
@@ -22,4 +24,14 @@ void shell_loop()
             free(input_line);
             ui_free_array2D(args);
         } while(1);
+}
+
+void shell_execute(char** args)
+{
+    pid_t child_PID = fork();
+
+    if (child_PID == -1)
+    {
+        perror("Failed to fork the parent process");
+    }
 }

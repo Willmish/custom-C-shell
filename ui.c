@@ -8,6 +8,8 @@
 #include "commands.h"
 #include "ui.h"
 
+#define BUFFER_SIZE 64
+
 void ui_display_prompt()
 {
     char* buf;
@@ -29,7 +31,7 @@ char* ui_get_input()
 arr2D ui_seperate_args(char* input_line)
 {
     arr2D args_struct;
-    int buff_size = 50;
+    int buff_size = BUFFER_SIZE;
     char** args = malloc(1*sizeof(char*));
     char* buff_string = malloc(buff_size*sizeof(char));
     int input_length = strlen(input_line);
@@ -62,8 +64,8 @@ arr2D ui_seperate_args(char* input_line)
             if (strlen(buff_string) + 2 > buff_size) // +2 for Null-terminating char and new char 
             {
                 // If the argument is longer then the buffer size, increase by 10
-                buff_string = realloc(buff_string, buff_size+10 * sizeof(char));
-                buff_size += 10;
+                buff_string = realloc(buff_string, buff_size+BUFFER_SIZE * sizeof(char));
+                buff_size += BUFFER_SIZE;
             }
             strncat(buff_string, &input_line[i], 1); // Copy single non-whitespace char to the buffer 
         }
