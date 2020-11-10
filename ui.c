@@ -24,7 +24,18 @@ char* ui_get_input()
 {
     char* lineptr = malloc(1);
     size_t bufsize = 0;
-    getline(&lineptr, &bufsize, stdin);
+    if(getline(&lineptr, &bufsize, stdin) == -1)
+    {
+        if(feof(stdin))
+        {
+            exit(EXIT_SUCCESS);
+        }
+        else
+        {
+            perror("Error reading stdin");
+            exit(EXIT_FAILURE);
+        }
+    }
     return lineptr;
 }
 
