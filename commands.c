@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <limits.h>
 // command libs
 #include <unistd.h>
@@ -55,9 +56,23 @@ int cmd_cd(const char* dir_path)
             case EACCES:
                 perror("Error changing directory");
                 break;
+            case ENOENT:
+                printf("cd: %s: %s\n", dir_path, strerror(errno));
+                break;
             default:
                 perror("Error changing directory (other)");
         }
     }
     return return_val;
+}
+
+void cmd_help()
+{
+    printf("Shym-SHELL, version 0.1\n");
+    printf("Currently does not support piping, Shell variables, arguments longer then a single word.\n");
+    printf("\n");
+    printf("Built-in commands:\n\n");
+    printf("cd [dir]\n");
+    printf("exit\n");
+    printf("help\n");
 }

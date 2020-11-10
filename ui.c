@@ -89,5 +89,4 @@ void ui_free_array2D(arr2D arr)
     {
         free(arr.array[i]);
     }
-    free(arr.array);
 }
