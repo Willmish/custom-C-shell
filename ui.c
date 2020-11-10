@@ -39,25 +39,25 @@ char* ui_get_input()
     return lineptr;
 }
 
-arr2D ui_seperate_args(char* input_line)
+stt_cmd_arr ui_seperate_args(char* input_line)
 {
-    arr2D args_struct;
+    stt_cmd_arr args_struct;
     int buff_size = BUFFER_SIZE;
     char** args = malloc(1*sizeof(char*));
     char* buff_string = malloc(buff_size*sizeof(char));
     int input_length = strlen(input_line);
-    int arg_no = 0;
+    u_long arg_no = 0;
     
 
     if (input_length == 1 && input_line[0] == '\n')
         {
             free(buff_string);
-            args_struct.array = args;
-            args_struct.no_rows = arg_no;
+            args_struct.content = args;
+            args_struct.last_index = arg_no;
             return args_struct;
         }
 
-    buff_string[0] = '\0';
+    buff_string[0] = '\0'; // Clear buff_string
     for (int i = 0; i < input_length; ++i)
     {
         if (isspace(input_line[i]))
@@ -84,8 +84,9 @@ arr2D ui_seperate_args(char* input_line)
 
     free(buff_string);
     // Pass the pointer to the 2D array along with the number of elements
-    args_struct.array = args;
-    args_struct.no_rows = arg_no;
+    args_struct.content = args;
+    args_struct.last_index = arg_no-1;
+    args_struct.length = arg_no;
     return args_struct;
 }
 
@@ -94,10 +95,3 @@ void ui_display_text(char* text)
     printf("%s\n", text);
 }
 
-void ui_free_array2D(arr2D arr)
-{
-    for (int i = 0; i < arr.no_rows; ++i)
-    {
-        free(arr.array[i]);
-    }
-}
