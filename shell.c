@@ -21,7 +21,7 @@ void shell_loop()
 {
     // Disable SIGINT and SIGSTTP
     struct sigaction new_act;
-    new_act.sa_handler = &sigHandler;
+    new_act.sa_handler = SIG_IGN;
     sigaction(SIGINT, &new_act, NULL);
     sigaction(SIGTSTP, &new_act, NULL);
     char* input_line;
@@ -79,13 +79,13 @@ void shell_execute(stt_cmd_arr* args, stt_cmd_arr* history)
     else if(strcmp(comd_name, "help") == 0)
     {
         if(args->last_index == 0)
-            cmd_help();
+            cmd_help(args);
         else
             printf("%s: too many arguments\n", comd_name);
     }
     else if(strcmp(comd_name, "history") == 0)
     {
-        printf("NIGGA");
+        shell_handle_builtin_err(args, cmd_history(args, history));
     }
     else
         shell_execute_from_path(args);
@@ -137,9 +137,6 @@ void shell_execute_from_path(stt_cmd_arr* args)
     }
 }
 
-void sigHandler()
+void shell_handle_builtin_err(stt_cmd_arr* args, int err_no)
 {
-    // Write \n to STDIN
-    char buf = '\n';
-    write(STDIN_FILENO, &buf, 1);
 }
