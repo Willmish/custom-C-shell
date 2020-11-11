@@ -20,4 +20,5 @@ void stt_free_command_arr(stt_cmd_arr* arr);
 
 // testing
 int stt_test_arr();
+void stt_print_arr(stt_cmd_arr* arr);
 

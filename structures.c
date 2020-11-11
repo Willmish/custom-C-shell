@@ -62,6 +62,11 @@ void stt_add_command(stt_cmd_arr* arr, int cmd_size, char* command)
     strcpy(arr->content[arr->last_index], command);
 }
 
+char* stt_get_command(stt_cmd_arr* arr, u_long index)
+{
+    return (arr->content[index]);
+}
+
 void stt_free_command_arr(stt_cmd_arr* arr)
 {
     if(arr->last_index >= 0)
@@ -73,23 +78,28 @@ void stt_free_command_arr(stt_cmd_arr* arr)
         free(arr->content);
 }
 
+void stt_print_arr(stt_cmd_arr* arr)
+{
+    printf("Array at: %p\nLength: %ld; Last index: %ld", arr, arr->length, arr->last_index);
+    for (int i = 0; i < arr->last_index; ++i)
+    {
+        printf("\n%d: size: %d; command: %s", i, arr->command_size[i], stt_get_command(arr, i));
+    }
+}
+
 int stt_test_arr()
 {
     char my_strings[][30] = {"hey there", "Ahoy", "thats a lot of greetings", "Hello there", "General Kenobi!"};
+    int len_my_strings = (int) (sizeof(my_strings)/30);
     for(int i = 0; i < 5; ++i)
         printf("%s\n", my_strings[i]);
-    int len_my_strings = 5;
 
-    printf("%d %d\n", len_my_strings, (int) (sizeof(my_strings)/sizeof(char)));
     stt_cmd_arr arr;
-    arr.content = malloc(5*sizeof(char*));
-    free(arr.content);
-    stt_intialise_command_arr(&arr, 64);
+    stt_intialise_command_arr(&arr, 4);
     for (int i = 0; i < len_my_strings; ++i)
         stt_add_command(&arr, 10, my_strings[i]);
-    
-    for (int i = 0; i< len_my_strings; ++i)
-        printf("%d: %s\n", i, arr.content[i]);
+
+    stt_print_arr(&arr);
     stt_free_command_arr(&arr);
     return 0;
 }
