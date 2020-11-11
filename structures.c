@@ -4,7 +4,7 @@
 #include <stdio.h>
  
 
-stt_cmd_arr* stt_intialise_command_arr(stt_cmd_arr* arr, u_long length)
+stt_cmd_arr* stt_intialise_command_arr(stt_cmd_arr* arr, long length)
 {
     if (length == 0)
     {
@@ -62,7 +62,31 @@ void stt_add_command(stt_cmd_arr* arr, int cmd_size, char* command)
     strcpy(arr->content[arr->last_index], command);
 }
 
-char* stt_get_command(stt_cmd_arr* arr, u_long index)
+void stt_add_NULL_terminator(stt_cmd_arr* arr)
+{
+    ++arr->last_index;
+
+    if (arr->last_index >= arr->length)
+    {
+        arr->length += arr->length; // double the size of the arr->content
+        if((arr->content = realloc(arr->content, arr->length*sizeof(char*))) == NULL)
+        {
+            perror("stt_cmd_arr allocation");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    if((arr->content[arr->last_index] = malloc(sizeof(NULL))) == NULL)
+    {
+        perror("stt_cmd_arr allocation");
+        exit(EXIT_FAILURE);
+    }
+
+    arr->command_size[arr->last_index] = sizeof(NULL);
+    arr->content[arr->last_index] = NULL;
+}
+
+char* stt_get_command(stt_cmd_arr* arr, long index)
 {
     return (arr->content[index]);
 }

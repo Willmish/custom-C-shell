@@ -7,6 +7,7 @@
 
 #include "commands.h"
 #include "ui.h"
+#include "structures.h"
 
 #define BUFFER_SIZE 64
 
@@ -39,22 +40,19 @@ char* ui_get_input()
     return lineptr;
 }
 
-stt_cmd_arr ui_seperate_args(char* input_line)
+stt_cmd_arr* ui_seperate_args(char* input_line, stt_cmd_arr* args)
 {
-    stt_cmd_arr args_struct;
     int buff_size = BUFFER_SIZE;
-    char** args = malloc(1*sizeof(char*));
     char* buff_string = malloc(buff_size*sizeof(char));
     int input_length = strlen(input_line);
-    u_long arg_no = 0;
-    
+
+    stt_intialise_command_arr(args, buff_size);
 
     if (input_length == 1 && input_line[0] == '\n')
         {
             free(buff_string);
-            args_struct.content = args;
-            args_struct.last_index = arg_no;
-            return args_struct;
+            args->last_index = -1;
+            return args;
         }
 
     buff_string[0] = '\0'; // Clear buff_string
@@ -64,11 +62,8 @@ stt_cmd_arr ui_seperate_args(char* input_line)
         {
             if (strlen(buff_string) != 0)
             {
-                // If a whitspace char occurs and the buff_string contains an argument, add it to the args list
-                ++arg_no;
-                args = realloc(args, arg_no*sizeof(char*));
-                args[arg_no-1] = malloc(buff_size*sizeof(char));
-                strcpy(args[arg_no-1], buff_string);
+                // If a whitspace char occurs and the buff_string contains an argument, add it to the args array
+                stt_add_command(args, buff_size, buff_string);
                 buff_string[0] = '\0';
             }
         } else {
@@ -83,11 +78,7 @@ stt_cmd_arr ui_seperate_args(char* input_line)
     }
 
     free(buff_string);
-    // Pass the pointer to the 2D array along with the number of elements
-    args_struct.content = args;
-    args_struct.last_index = arg_no-1;
-    args_struct.length = arg_no;
-    return args_struct;
+    return args;
 }
 
 void ui_display_text(char* text)

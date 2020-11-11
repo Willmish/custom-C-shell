@@ -18,14 +18,13 @@
 
 void shell_loop()
 {
-    stt_test_arr();
+    // TODO FIX AND add history)
     /*
     history 
     int* history = malloc(MAX_HISTORY_LEN);
-    u_long history_len = 1024;
-    u_long histo
+    long history_len = 1024;
+    long histo
     */
-    /*
     char* input_line;
     stt_cmd_arr args;
     do
@@ -34,50 +33,47 @@ void shell_loop()
             // read user input
             input_line = ui_get_input();
             // separate command flags
-            args = ui_seperate_args(input_line);
+            args = *ui_seperate_args(input_line, &args);
 
-            if (args.length <= 0)
+            if (args.last_index < 0)
             {
                 free(input_line);
-                stt_free_command_arr(args);
+                stt_free_command_arr(&args);
                 continue;
             }
 
             if (strcmp(args.content[0], "exit") == 0)
             {
                 free(input_line);
-                stt_free_command_arr(args);
+                stt_free_command_arr(&args);
                 break;
             }
-            * DEBUG
-            for (int i = 0; i < args.no_rows; ++i)
-                printf("%d: %s\n", i, args.array[i]);
-                *
+
             // execute commands
-            shell_execute(args);
+            shell_execute(&args);
 
             free(input_line);
-            stt_free_command_arr(args);
-        } while(1);*/
+            stt_free_command_arr(&args);
+        } while(1);
     printf("Goodbye!");
 }
 
-void shell_execute(stt_cmd_arr args)
+void shell_execute(stt_cmd_arr* args)
 {
-    char* comd_name = args.content[0];
+    char* comd_name = args->content[0];
 
     if (strcmp(comd_name, "cd") == 0)
     {
-        if (args.length == 2)
-            cmd_cd(args.content[1]);
-        else if(args.length > 2)
+        if (args->last_index == 1)
+            cmd_cd(args->content[1]);
+        else if(args->last_index >1)
             printf("%s: too many arguments\n", comd_name);
         else
             printf("%s: too few arguments\n", comd_name);
     }
     else if(strcmp(comd_name, "help") == 0)
     {
-        if(args.length == 1)
+        if(args->last_index == 0)
             cmd_help();
         else
             printf("%s: too many arguments\n", comd_name);
@@ -87,14 +83,11 @@ void shell_execute(stt_cmd_arr args)
     
 }
 
-void shell_execute_from_path(stt_cmd_arr args)
+void shell_execute_from_path(stt_cmd_arr* args)
 {
-    if (args.content[args.last_index] != NULL) // Make sure the command is NULL-terminated
+    if (stt_get_command(args, args->last_index) != NULL) // Make sure the command is NULL-terminated
     {
-        args.content = realloc(args.content, (++args.length) * sizeof(char*));
-        ++args.last_index;
-        args.content[args.last_index] = malloc(sizeof(NULL));
-        args.content[args.last_index] = NULL;
+        stt_add_NULL_terminator(args);
     }
 
     pid_t child_PID = fork();
@@ -105,16 +98,16 @@ void shell_execute_from_path(stt_cmd_arr args)
         perror("Failed to fork the parent process");
     } if (child_PID == 0)
     {
-        execvp(args.content[0], args.content);
+        execvp(stt_get_command(args, 0),args->content);
         // IF it gets here, either the command failed to execute or was not found in path
         if (errno == ENOENT)
         {
-            int command_length = strlen(args.content[0]);
+            int command_length = strlen(stt_get_command(args, 0));
             bool is_a_file = false;
 
             for(int i = 0; i < command_length; ++i)
             {
-                if (args.content[0][i] == '/')
+                if (stt_get_command(args, 0)[i] == '/')
                 {
                     is_a_file =true;
                     break;
@@ -122,9 +115,9 @@ void shell_execute_from_path(stt_cmd_arr args)
             }
 
             if (is_a_file)
-                printf("%s: No such file or directory\n", args.content[0]);
+                printf("%s: No such file or directory\n", stt_get_command(args, 0)); 
             else
-                printf("%s: command not found\n", args.content[0]);
+                printf("%s: command not found\n", stt_get_command(args, 0));
         } else
             perror("Failed to execute command");
 
