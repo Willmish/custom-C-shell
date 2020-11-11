@@ -59,8 +59,9 @@ int cmd_cd(stt_cmd_arr* args)
         return E2BIG;
     else
     {
-        // TODO cd to home of current user
-        printf("cd: too few arguments (cd or cd ~ not implemented)\n");
+        return_val = chdir(getenv("HOME"));
+        if (return_val != 0)
+            return errno;
     }
     return 0;
 }
@@ -97,15 +98,50 @@ int cmd_history(stt_cmd_arr* args, stt_cmd_arr* history)
 
 int cmd_help(stt_cmd_arr* args)
 {
-    if(args->last_index > 0)
+    if(args->last_index > 1)
         return E2BIG;
-    printf("Shym-SHELL, version 0.2\n");
-    printf("Currently does not support piping, Shell variables, arguments longer then a single word.\n");
     printf("\n");
-    printf("Built-in commands:\n\n");
-    printf("cd [dir]\n");
-    printf("exit\n");
-    printf("help\n");
-    printf("history [n] (n is optional)\n"); 
+    if(args->last_index == 0)
+    {
+        printf("Shym-SHELL, version 0.2\n");
+        printf("Currently does not support piping, Shell variables, arguments longer then a single word.\n");
+        printf("\n");
+        printf("Built-in commands:\n\n");
+        printf("cd [dir] (dir is optional)\n");
+        printf("exit\n");
+        printf("help [builtin]\n");
+        printf("history [n] (n is optional)\n"); 
+        printf("\nUse help [builtin] to get help on a particular builtin function.\n\n");
+        return 0;
+    }
+    char* builtin = stt_get_command(args, 1);
+
+    if (strcmp(builtin, "cd") == 0)
+    {
+        printf("cd: cd [dir]\n\n");
+        printf("Change the current directory to DIR. The default DIR is the value of the HOME shell variable.\n");
+    }
+    else if (strcmp(builtin, "exit") == 0)
+    {
+        printf("exit: exit\n\n");
+        printf("Exits the shell.\n");
+    }
+    else if (strcmp(builtin, "help") == 0)
+    {
+        printf("help: help [builtin]\n\n");
+        printf("If BUILTIN is specified, displays help mesage for the particular function.\n");
+        printf("Otherwise, displays the general help information for this shell.\n");
+    }
+    else if (strcmp(builtin, "history") == 0)
+    {
+        printf("history: history [n]\n\n");
+        printf("If N is specified, displays the last N commands entered.\n");
+        printf("Otherwise, displays all commands entered to the shell for this session.\n");
+    }
+
+    else
+    {
+        printf("%s: no builtin command %s defined\n", stt_get_command(args, 0), builtin);
+    }
     return 0;
 }

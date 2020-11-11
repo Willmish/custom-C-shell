@@ -24,6 +24,8 @@ void shell_loop()
     new_act.sa_handler = SIG_IGN;
     sigaction(SIGINT, &new_act, NULL);
     sigaction(SIGTSTP, &new_act, NULL);
+    
+
     char* input_line;
     int input_length;
     stt_cmd_arr args;

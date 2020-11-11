@@ -30,9 +30,9 @@ The shell can be exited (stopped) by the builtin `exit`command or by an EOF (`Ct
 
 ### Commands available
 Currently, builtin commands available are:
-- `cd [dir]` - Allows changing directory (takes a single argument)
+- `cd [dir]` - Allows changing directory. If dir is specified, changes directory to `dir`. Otherwise changes dirctory to `$HOME`.
 - `exit` - Exits the shell
-- `help` - Displays a short message with a list of builtin commands
+- `help [builtin]` - Displays a short message with a list of builtin commands. If builtin is specified, display help for that builtin.
 - `history [n]` - Displays the history of the current session. If n is specified, displays last `n` commands.
 
 ## Running the program
