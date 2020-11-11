@@ -81,8 +81,3 @@ stt_cmd_arr* ui_seperate_args(char* input_line, stt_cmd_arr* args)
     return args;
 }
 
-void ui_display_text(char* text)
-{
-    printf("%s\n", text);
-}
-

@@ -43,8 +43,6 @@ void shell_loop()
                 stt_free_command_arr(&args);
                 continue;
             }
-            // If it's not an empty string, add to command history
-            stt_add_command(&history, (input_length+1) * sizeof(char), input_line);
 
             if (strcmp(args.content[0], "exit") == 0)
             {
@@ -56,6 +54,8 @@ void shell_loop()
             // execute commands
             shell_execute(&args, &history);
 
+            // If it's not an empty string, add to command history
+            stt_add_command(&history, (input_length+1) * sizeof(char), input_line);
             free(input_line);
             stt_free_command_arr(&args);
         } while(1);
@@ -69,19 +69,11 @@ void shell_execute(stt_cmd_arr* args, stt_cmd_arr* history)
 
     if (strcmp(comd_name, "cd") == 0)
     {
-        if (args->last_index == 1)
-            cmd_cd(args->content[1]);
-        else if(args->last_index >1)
-            printf("%s: too many arguments\n", comd_name);
-        else
-            printf("%s: too few arguments\n", comd_name);
+        shell_handle_builtin_err(args, cmd_cd(args));
     }
     else if(strcmp(comd_name, "help") == 0)
     {
-        if(args->last_index == 0)
-            cmd_help(args);
-        else
-            printf("%s: too many arguments\n", comd_name);
+        shell_handle_builtin_err(args, cmd_help(args));
     }
     else if(strcmp(comd_name, "history") == 0)
     {
@@ -139,4 +131,17 @@ void shell_execute_from_path(stt_cmd_arr* args)
 
 void shell_handle_builtin_err(stt_cmd_arr* args, int err_no)
 {
+    char* cmd_name = stt_get_command(args, 0);
+    switch(err_no)
+    {
+        case 0:
+            return;
+            break;
+        case E2BIG:
+            printf("%s: %s", cmd_name, strerror(E2BIG));
+            break;
+        default:
+            printf("%s: %s", cmd_name, strerror(err_no));
+    }
+    printf("\n");
 }

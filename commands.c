@@ -46,24 +46,23 @@ char* cmd_getcwd()
     return buf;
 }
 
-int cmd_cd(const char* dir_path)
+int cmd_cd(stt_cmd_arr* args)
 {
-    int return_val = chdir(dir_path);
-    if (return_val != 0)
+    int return_val;
+    if (args->last_index == 1)
     {
-        switch(errno)
-        {
-            case EACCES:
-                perror("Error changing directory");
-                break;
-            case ENOENT:
-                printf("cd: %s: %s\n", dir_path, strerror(errno));
-                break;
-            default:
-                perror("Error changing directory (other)");
-        }
+        return_val = chdir(stt_get_command(args, 1));
+        if (return_val != 0)
+            return errno;
     }
-    return return_val;
+    else if(args->last_index >1)
+        return E2BIG;
+    else
+    {
+        // TODO cd to home of current user
+        printf("cd: too few arguments (cd or cd ~ not implemented)\n");
+    }
+    return 0;
 }
 
 int cmd_history(stt_cmd_arr* args, stt_cmd_arr* history)
@@ -96,13 +95,17 @@ int cmd_history(stt_cmd_arr* args, stt_cmd_arr* history)
 }
 
 
-void cmd_help(stt_cmd_arr* args)
+int cmd_help(stt_cmd_arr* args)
 {
-    printf("Shym-SHELL, version 0.1\n");
+    if(args->last_index > 0)
+        return E2BIG;
+    printf("Shym-SHELL, version 0.2\n");
     printf("Currently does not support piping, Shell variables, arguments longer then a single word.\n");
     printf("\n");
     printf("Built-in commands:\n\n");
     printf("cd [dir]\n");
     printf("exit\n");
     printf("help\n");
+    printf("history [n] (n is optional)\n"); 
+    return 0;
 }
