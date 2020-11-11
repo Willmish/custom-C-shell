@@ -21,11 +21,11 @@ void ui_display_prompt()
     free(buf);
 }
 
-char* ui_get_input()
+char* ui_get_input(int* input_length)
 {
     char* lineptr = malloc(1);
     size_t bufsize = 0;
-    if(getline(&lineptr, &bufsize, stdin) == -1)
+    if((*input_length = getline(&lineptr, &bufsize, stdin)) == -1)
     {
         if(feof(stdin))
         {

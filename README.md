@@ -12,13 +12,16 @@ First, by default it displays a prompt, before any other operations take place. 
 ### Read
 The program reads from stdin all characters until a `NEWLINE` (`\n`) character is found. It dynamically allocates memory for the string and returns a pointer to that string.
 
-## Evaluate
+### Evaluate
 Next it splits the program into separate arguments (tokens) based on delimiter characters which for simplicity are taken as whitespaces. It then returns a structure containing an array of seperate arguments.
 
 If no arguments are passed, the loop `continue`s to the next iteration. Then, the arguments are passed to an executor, which ensures that they are NULL-terminated and runs the command in a child process.
 
-## Print
+### Print
 The child process runs the command and outputs to `stdout`.
+
+### Exiting the shell
+The shell can be exited (stopped) by the builtin `exit`command or by an EOF (Ctrl+D). It will not be stopped by an interrupt signal (SIGINT) (Ctrl+C) or by a stop signal (SIGTSTP) (Ctrl+Z).
 
  Features to add:
 - Bin folder (rm command moves to the bin folder, empty every n days or when max limit reached)
